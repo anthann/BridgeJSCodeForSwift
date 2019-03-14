@@ -1,0 +1,9 @@
+[submodule "BridgeJSCodeForSwift/Resources/prism"]
+	path = BridgeJSCodeForSwift/Resources/prism
+	url = https://github.com/PrismJS/prism.git
+[submodule "BridgeJSCodeForSwift/Resources/highlight.js"]
+	path = BridgeJSCodeForSwift/Resources/highlight.js
+	url = https://github.com/highlightjs/highlight.js.git
+[submodule "BridgeJSCodeForSwift/Resources/highlight"]
+	path = BridgeJSCodeForSwift/Resources/highlight
+	url = https://github.com/highlightjs/highlight.js.git
