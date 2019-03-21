@@ -50,31 +50,32 @@ extension TernViewController: UITextViewDelegate {
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
         candidates.removeAll()
         tableView.reloadData()
-        if let oldText = textView.text {
-            let newText = (oldText as NSString).replacingCharacters(in: range, with: text)
-            ternJS.onTextChange(newText, filename: "abc.js")
-            if text == "." {
-                ternJS.requestForHint(filename: "abc.js", offset: range.location + 1) { [weak self] (err, response) in
-                    if let err = err {
-                        if err is NSNull {
-                        } else {
-                            print("err: \(err)")
-                        }
-                    }
-                    if let dict = response as? NSDictionary {
-                        if let array = dict["completions"] as? NSArray {
-                            for item in array {
-                                if let str = item as? String {
-                                    self?.candidates.append(str)
-                                }
-                            }
-                            self?.tableView.reloadData()
-                        }
-                        print(dict)
+        guard let oldText = textView.text else {
+            return true
+        }
+        let newText = (oldText as NSString).replacingCharacters(in: range, with: text)
+        ternJS.onTextChange(newText, filename: "abc.js")
+//        if text == "." {
+            ternJS.requestForHint(filename: "abc.js", offset: range.location + 1) { [weak self] (err, response) in
+                if let err = err {
+                    if err is NSNull {
+                    } else {
+                        print("err: \(err)")
                     }
                 }
+                if let dict = response as? NSDictionary {
+                    if let array = dict["completions"] as? NSArray {
+                        for item in array {
+                            if let str = item as? String {
+                                self?.candidates.append(str)
+                            }
+                        }
+                        self?.tableView.reloadData()
+                    }
+                    print(dict)
+                }
             }
-        }
+//        }
         return true
     }
 }

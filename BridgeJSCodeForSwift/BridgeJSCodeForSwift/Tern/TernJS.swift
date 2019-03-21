@@ -15,6 +15,7 @@ class TernJS {
     private var fileContents: [String: String] = [String: String]()
 
     init() {
+        // Shim
         jsContext.exceptionHandler = { (ctx: JSContext!, value: JSValue!) in
             print(value!.toString())
         }
@@ -33,6 +34,7 @@ class TernJS {
             }
         }
         
+        // Initialize Tern.Server
         let getFile: @convention(block) (String) -> String = { [weak self] filename in
             print("filename: \(filename)")
             guard let strongSelf = self else {
@@ -60,6 +62,12 @@ class TernJS {
         """)
     }
     
+    
+    /// 更新源文件
+    ///
+    /// - Parameters:
+    ///   - text: 完整源文件内容
+    ///   - filename: 文件名
     public func onTextChange(_ text: String, filename: String) {
         guard let ternServer = jsContext.objectForKeyedSubscript("ternServer") else {
             return
@@ -68,6 +76,12 @@ class TernJS {
         ternServer.invokeMethod("requestFileUpdate", withArguments: [filename, text])
     }
     
+    /// 获取代码提示
+    ///
+    /// - Parameters:
+    ///   - filename: 源文件名
+    ///   - offset: 光标相对文件首的偏移
+    ///   - codeCompleteBlock: 回调函数。
     public func requestForHint(filename: String, offset: Int, codeCompleteBlock: @escaping CodeCompleteBlock) {
         let ternServer = jsContext.objectForKeyedSubscript("ternServer")
         jsContext.evaluateScript("""
@@ -97,6 +111,10 @@ class TernJS {
         ternServer.invokeMethod("addFile", withArguments: [name, content])
     }
     
+    
+    /// 删除源文件
+    ///
+    /// - Parameter name: 文件名
     public func deleteFile(name: String) {
         guard let ternServer = jsContext.objectForKeyedSubscript("ternServer") else {
             return
