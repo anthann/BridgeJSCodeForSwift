@@ -12,7 +12,7 @@ import JavaScriptCore
 class TernJS {
     typealias CodeCompleteBlock = @convention(block) (Any?, Any?) -> ()
     private let jsContext = JSContext()!
-    private var fileContent: String = ""
+    private var fileContents: [String: String] = [String: String]()
 
     init() {
         jsContext.exceptionHandler = { (ctx: JSContext!, value: JSValue!) in
@@ -38,7 +38,11 @@ class TernJS {
             guard let strongSelf = self else {
                 return ""
             }
-            return strongSelf.fileContent
+            if let content = strongSelf.fileContents[filename] {
+                return content
+            } else {
+                return ""
+            }
         }
         jsContext.setObject(getFile, forKeyedSubscript: "_native_getfile" as NSString)
         
@@ -60,7 +64,7 @@ class TernJS {
         guard let ternServer = jsContext.objectForKeyedSubscript("ternServer") else {
             return
         }
-        self.fileContent = text
+        self.fileContents[filename] = text
         ternServer.invokeMethod("requestFileUpdate", withArguments: [filename, text])
     }
     
