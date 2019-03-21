@@ -40,7 +40,19 @@ extension TernViewController: UITextViewDelegate {
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
         if text == "." {
             let content = textView.text + text
-            ternJS.requestForHint(currentFileContent: content, filename: "abc.js", offset: content.count)
+            ternJS.requestForHint(currentFileContent: content, filename: "abc.js", offset: content.count) { (err, response) in
+                print("Response: \n")
+                if let err = err {
+                    if err is NSNull {
+                    } else {
+                        print("err: \(err)")
+                    }
+                }
+                if let dict = response as? NSDictionary {
+                    print(dict)
+                }
+            }
+//            ternJS.requestForHint(currentFileContent: content, filename: "abc.js", offset: content.count, codeCompleteBl)
         }
         return true
     }

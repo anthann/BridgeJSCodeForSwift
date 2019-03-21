@@ -10,6 +10,7 @@ import Foundation
 import JavaScriptCore
 
 class TernJS {
+    typealias CodeCompleteBlock = @convention(block) (Any?, Any?) -> ()
     private let jsContext = JSContext()!
     private var fileContent: String = ""
 
@@ -20,12 +21,6 @@ class TernJS {
         let window = JSValue(newObjectIn: jsContext)
         jsContext.setObject(window, forKeyedSubscript: "window" as NSString)
         TimerJS.registerInto(jsContext: jsContext)
-//        let setTimeoutBlock: @convention(block) (JSValue, JSValue) -> () = { function, timeout in
-//            DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(Int(timeout.toInt32())), execute: {
-//                function.call(withArguments: [])
-//            })
-//        }
-//        jsContext.setObject(setTimeoutBlock, forKeyedSubscript: "setTimeout" as NSString)
         
         // Load source files
         let bundle = Bundle.main
@@ -59,7 +54,7 @@ class TernJS {
         
     }
     
-    public func requestForHint(currentFileContent: String, filename: String, offset: Int) {
+    public func requestForHint(currentFileContent: String, filename: String, offset: Int, codeCompleteBlock: @escaping CodeCompleteBlock) {
         fileContent = currentFileContent
         addFile(name: filename, content: currentFileContent)
         let ternServer = jsContext.objectForKeyedSubscript("ternServer")
@@ -70,19 +65,7 @@ class TernJS {
         guard let doc = jsContext.objectForKeyedSubscript("__doc") else {
             return
         }
-        let callback: @convention(block) (Any?, Any?) -> () = { err, response in
-            print("Response: \n")
-            if let err = err {
-                if err is NSNull {
-                } else {
-                    print("err: \(err)")
-                }
-            }
-            if let dict = response as? NSDictionary {
-                print(dict)
-            }
-        }
-        jsContext.setObject(callback, forKeyedSubscript: "__response_call_back" as NSString)
+        jsContext.setObject(codeCompleteBlock, forKeyedSubscript: "__response_call_back" as NSString)
         guard let callbackObj = jsContext.objectForKeyedSubscript("__response_call_back") else {
             return
         }
