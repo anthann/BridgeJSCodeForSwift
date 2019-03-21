@@ -25,7 +25,7 @@ class TernJS {
         
         // Load source files
         let bundle = Bundle.main
-        let sources = ["polyfill", "acorn", "acorn-loose", "walk", "signal", "tern", "def", "comment", "infer"]
+        let sources = ["polyfill", "acorn", "acorn-loose", "walk", "signal", "tern", "def", "comment", "infer", "modules", "es_modules", "requirejs", "doc_comment", "complete_strings"]
         for source in sources {
             if let url = bundle.url(forResource: source, withExtension: "js", subdirectory: "tern") {
                 jsContext.evaluateScript(try! String(contentsOf: url), withSourceURL: url)
