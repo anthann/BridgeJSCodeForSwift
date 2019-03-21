@@ -14,10 +14,10 @@ class HighlightJS {
     public let highlightJSValue: JSValue
     
     init() {
-        let window = JSValue(newObjectIn: jsContext)
         jsContext.exceptionHandler = { (ctx: JSContext!, value: JSValue!) in
             print(value!.toString())
         }
+        let window = JSValue(newObjectIn: jsContext)
         jsContext.setObject(window, forKeyedSubscript: "window" as NSString)
         
         

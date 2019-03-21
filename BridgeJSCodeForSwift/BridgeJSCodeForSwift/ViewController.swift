@@ -11,7 +11,7 @@ import SnapKit
 
 class ViewController: UIViewController {
     enum Items: Int {
-        case prism = 0, highlight, max
+        case prism = 0, highlight, tern, max
         
         func  title() -> String {
             switch self {
@@ -19,6 +19,8 @@ class ViewController: UIViewController {
                 return "Prism"
             case .highlight:
                 return "Highlight"
+            case .tern:
+                return "Tern"
             case .max:
                 fatalError()
             }
@@ -76,8 +78,11 @@ extension ViewController: UITableViewDelegate {
         case .highlight:
             let vc = HighlightViewController()
             self.navigationController?.pushViewController(vc, animated: true)
-        default:
-            break
+        case .tern:
+            let vc = TernViewController()
+            self.navigationController?.pushViewController(vc, animated: true)
+        case .max:
+            fatalError()
         }
     }
 }

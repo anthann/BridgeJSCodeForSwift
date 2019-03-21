@@ -16,23 +16,10 @@ class PrismJS {
         jsContext.exceptionHandler = { (ctx: JSContext!, value: JSValue!) in
             print(value!.toString())
         }
-        guard let componentUrl = Bundle.main.url(forResource: "components", withExtension: "js", subdirectory: "prism")  else {
+        if let prismUrl = Bundle.main.url(forResource: "prism", withExtension: "js", subdirectory: "prism") {
+            jsContext.evaluateScript(try! String(contentsOf: prismUrl), withSourceURL: prismUrl)
+        } else {
             fatalError()
-        }
-        jsContext.evaluateScript(try! String(contentsOf: componentUrl), withSourceURL: componentUrl)
-        guard let prismUrl = Bundle.main.url(forResource: "prism-core", withExtension: "js", subdirectory: "prism/components") else {
-            fatalError()
-        }
-        jsContext.evaluateScript(try! String(contentsOf: prismUrl), withSourceURL: prismUrl)
-        
-        if let markupUrl = Bundle.main.url(forResource: "prism-markup", withExtension: "js", subdirectory: "prism/components") {
-            jsContext.evaluateScript(try! String(contentsOf: markupUrl), withSourceURL: markupUrl)
-        }
-        if let clikeUrl = Bundle.main.url(forResource: "prism-clike", withExtension: "js", subdirectory: "prism/components") {
-            jsContext.evaluateScript(try! String(contentsOf: clikeUrl), withSourceURL: clikeUrl)
-        }
-        if let javascriptUrl = Bundle.main.url(forResource: "prism-javascript", withExtension: "js", subdirectory: "prism/components") {
-            jsContext.evaluateScript(try! String(contentsOf: javascriptUrl), withSourceURL: javascriptUrl)
         }
         jsContext.globalObject.setObject("javascript" as NSString, forKeyedSubscript: "lang" as NSString)
     }

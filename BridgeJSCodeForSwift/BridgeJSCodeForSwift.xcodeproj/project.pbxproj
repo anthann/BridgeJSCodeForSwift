@@ -17,6 +17,9 @@
 		37C7CC9A223A4AE40010E7F9 /* PrismJS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37C7CC99223A4AE40010E7F9 /* PrismJS.swift */; };
 		37C7CC9C223A4BFF0010E7F9 /* HighlightJS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37C7CC9B223A4BFF0010E7F9 /* HighlightJS.swift */; };
 		37C7CC9E223A4C070010E7F9 /* HighlightViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37C7CC9D223A4C070010E7F9 /* HighlightViewController.swift */; };
+		37C7CCAB224343140010E7F9 /* tern in Resources */ = {isa = PBXBuildFile; fileRef = 37C7CCAA224343130010E7F9 /* tern */; };
+		37C7CCAD224343220010E7F9 /* TernJS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37C7CCAC224343220010E7F9 /* TernJS.swift */; };
+		37C7CCAF2243436A0010E7F9 /* TernViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37C7CCAE2243436A0010E7F9 /* TernViewController.swift */; };
 		FA28C71B248D5425B7AA6A8E /* Pods_BridgeJSCodeForSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ED065F04A25572167D11ECE0 /* Pods_BridgeJSCodeForSwift.framework */; };
 /* End PBXBuildFile section */
 
@@ -33,6 +36,9 @@
 		37C7CC99223A4AE40010E7F9 /* PrismJS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrismJS.swift; sourceTree = "<group>"; };
 		37C7CC9B223A4BFF0010E7F9 /* HighlightJS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HighlightJS.swift; sourceTree = "<group>"; };
 		37C7CC9D223A4C070010E7F9 /* HighlightViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HighlightViewController.swift; sourceTree = "<group>"; };
+		37C7CCAA224343130010E7F9 /* tern */ = {isa = PBXFileReference; lastKnownFileType = folder; name = tern; path = Resources/tern; sourceTree = SOURCE_ROOT; };
+		37C7CCAC224343220010E7F9 /* TernJS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TernJS.swift; sourceTree = "<group>"; };
+		37C7CCAE2243436A0010E7F9 /* TernViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TernViewController.swift; sourceTree = "<group>"; };
 		516BD6F90784F0A95D394F58 /* Pods-BridgeJSCodeForSwift.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BridgeJSCodeForSwift.release.xcconfig"; path = "Pods/Target Support Files/Pods-BridgeJSCodeForSwift/Pods-BridgeJSCodeForSwift.release.xcconfig"; sourceTree = "<group>"; };
 		A5FCF45F8437D7144B0122AF /* Pods-BridgeJSCodeForSwift.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BridgeJSCodeForSwift.debug.xcconfig"; path = "Pods/Target Support Files/Pods-BridgeJSCodeForSwift/Pods-BridgeJSCodeForSwift.debug.xcconfig"; sourceTree = "<group>"; };
 		ED065F04A25572167D11ECE0 /* Pods_BridgeJSCodeForSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_BridgeJSCodeForSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -80,6 +86,7 @@
 		37C7C7ED223A43620010E7F9 /* BridgeJSCodeForSwift */ = {
 			isa = PBXGroup;
 			children = (
+				37C7CCA9224342FC0010E7F9 /* Tern */,
 				37C7C80C223A4A660010E7F9 /* Highlight */,
 				37C7C80B223A4A5E0010E7F9 /* Prism */,
 				37C7C7EE223A43620010E7F9 /* AppDelegate.swift */,
@@ -109,6 +116,16 @@
 				37C7CC9D223A4C070010E7F9 /* HighlightViewController.swift */,
 			);
 			path = Highlight;
+			sourceTree = "<group>";
+		};
+		37C7CCA9224342FC0010E7F9 /* Tern */ = {
+			isa = PBXGroup;
+			children = (
+				37C7CCAA224343130010E7F9 /* tern */,
+				37C7CCAC224343220010E7F9 /* TernJS.swift */,
+				37C7CCAE2243436A0010E7F9 /* TernViewController.swift */,
+			);
+			path = Tern;
 			sourceTree = "<group>";
 		};
 		3889052375756B514133E66B /* Frameworks */ = {
@@ -179,6 +196,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				37C7CCAB224343140010E7F9 /* tern in Resources */,
 				37C7C80A223A48B80010E7F9 /* prism in Resources */,
 				37C7CC96223A4A890010E7F9 /* highlight in Resources */,
 				37C7C7F9223A43630010E7F9 /* LaunchScreen.storyboard in Resources */,
@@ -243,8 +261,10 @@
 				37C7CC9C223A4BFF0010E7F9 /* HighlightJS.swift in Sources */,
 				37C7CC9E223A4C070010E7F9 /* HighlightViewController.swift in Sources */,
 				37C7CC9A223A4AE40010E7F9 /* PrismJS.swift in Sources */,
+				37C7CCAF2243436A0010E7F9 /* TernViewController.swift in Sources */,
 				37C7C7F1223A43620010E7F9 /* ViewController.swift in Sources */,
 				37C7CC98223A4AB10010E7F9 /* PrismViewController.swift in Sources */,
+				37C7CCAD224343220010E7F9 /* TernJS.swift in Sources */,
 				37C7C7EF223A43620010E7F9 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
