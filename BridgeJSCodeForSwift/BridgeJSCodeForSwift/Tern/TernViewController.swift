@@ -34,13 +34,14 @@ class TernViewController: UIViewController {
 
 extension TernViewController: UITextViewDelegate {
     func textViewDidChange(_ textView: UITextView) {
-//        ternJS.onTextChange(textView.text)
+        
     }
     
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
         if text == "." {
             let content = textView.text + text
-            ternJS.requestForHint(currentFileContent: content, filename: "abc.js", offset: content.count) { (err, response) in
+            ternJS.onTextChange(content, filename: "abc.js")
+            ternJS.requestForHint(filename: "abc.js", offset: content.count) { (err, response) in
                 print("Response: \n")
                 if let err = err {
                     if err is NSNull {
@@ -52,8 +53,44 @@ extension TernViewController: UITextViewDelegate {
                     print(dict)
                 }
             }
-//            ternJS.requestForHint(currentFileContent: content, filename: "abc.js", offset: content.count, codeCompleteBl)
+            //            ternJS.requestForHint(currentFileContent: content, filename: "abc.js", offset: content.count, codeCompleteBl)
         }
         return true
+//        if let oldText = textView.text {
+//            let newText = (oldText as NSString).replacingCharacters(in: range, with: text)
+//            ternJS.onTextChange(newText, filename: "abc.js")
+//            if text == "." {
+//                ternJS.requestForHint(filename: "abc.js", offset: range.location+1) { (err, response) in
+//                    if let err = err {
+//                        if err is NSNull {
+//                        } else {
+//                            print("err: \(err)")
+//                        }
+//                    }
+//                    if let dict = response as? NSDictionary {
+//                        print(dict)
+//                    }
+//                }
+//            }
+//        }
+//        return true
+//
+//        if text == "." {
+//            let content = textView.text + text
+//            ternJS.requestForHint(currentFileContent: content, filename: "abc.js", offset: content.count) { (err, response) in
+//                print("Response: \n")
+//                if let err = err {
+//                    if err is NSNull {
+//                    } else {
+//                        print("err: \(err)")
+//                    }
+//                }
+//                if let dict = response as? NSDictionary {
+//                    print(dict)
+//                }
+//            }
+//            ternJS.requestForHint(currentFileContent: content, filename: "abc.js", offset: content.count, codeCompleteBl)
+//        }
+//        return true
     }
 }

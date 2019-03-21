@@ -48,15 +48,23 @@ class TernJS {
             async: true,
         });
         """)
-    }
-    
-    public func onTextChange(_ text: String, filename: String, offset: Int) {
         
+        jsContext.evaluateScript("""
+        ternServer.requestFileUpdate = function(filename, content) {
+            this.request({files: [{type: 'full', name: filename, text: content}]}, (function(err, response){}))
+        };
+        """)
     }
     
-    public func requestForHint(currentFileContent: String, filename: String, offset: Int, codeCompleteBlock: @escaping CodeCompleteBlock) {
-        fileContent = currentFileContent
-        addFile(name: filename, content: currentFileContent)
+    public func onTextChange(_ text: String, filename: String) {
+        guard let ternServer = jsContext.objectForKeyedSubscript("ternServer") else {
+            return
+        }
+        self.fileContent = text
+        ternServer.invokeMethod("requestFileUpdate", withArguments: [filename, text])
+    }
+    
+    public func requestForHint(filename: String, offset: Int, codeCompleteBlock: @escaping CodeCompleteBlock) {
         let ternServer = jsContext.objectForKeyedSubscript("ternServer")
         jsContext.evaluateScript("""
             var __doc = {query: {type: "completions", file: \"\(filename)\", end: \(offset)}}
