@@ -20,6 +20,9 @@
 		37C7CCAB224343140010E7F9 /* tern in Resources */ = {isa = PBXBuildFile; fileRef = 37C7CCAA224343130010E7F9 /* tern */; };
 		37C7CCAD224343220010E7F9 /* TernJS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37C7CCAC224343220010E7F9 /* TernJS.swift */; };
 		37C7CCAF2243436A0010E7F9 /* TernViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37C7CCAE2243436A0010E7F9 /* TernViewController.swift */; };
+		37C7CCB1224484ED0010E7F9 /* TernBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37C7CCB0224484ED0010E7F9 /* TernBridge.swift */; };
+		37C7CCB32244856B0010E7F9 /* TimerJSBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37C7CCB22244856B0010E7F9 /* TimerJSBridge.swift */; };
+		37C7CCB5224490C90010E7F9 /* ConsoleJSBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37C7CCB4224490C90010E7F9 /* ConsoleJSBridge.swift */; };
 		FA28C71B248D5425B7AA6A8E /* Pods_BridgeJSCodeForSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ED065F04A25572167D11ECE0 /* Pods_BridgeJSCodeForSwift.framework */; };
 /* End PBXBuildFile section */
 
@@ -39,6 +42,9 @@
 		37C7CCAA224343130010E7F9 /* tern */ = {isa = PBXFileReference; lastKnownFileType = folder; name = tern; path = Resources/tern; sourceTree = SOURCE_ROOT; };
 		37C7CCAC224343220010E7F9 /* TernJS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TernJS.swift; sourceTree = "<group>"; };
 		37C7CCAE2243436A0010E7F9 /* TernViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TernViewController.swift; sourceTree = "<group>"; };
+		37C7CCB0224484ED0010E7F9 /* TernBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TernBridge.swift; sourceTree = "<group>"; };
+		37C7CCB22244856B0010E7F9 /* TimerJSBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerJSBridge.swift; sourceTree = "<group>"; };
+		37C7CCB4224490C90010E7F9 /* ConsoleJSBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsoleJSBridge.swift; sourceTree = "<group>"; };
 		516BD6F90784F0A95D394F58 /* Pods-BridgeJSCodeForSwift.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BridgeJSCodeForSwift.release.xcconfig"; path = "Pods/Target Support Files/Pods-BridgeJSCodeForSwift/Pods-BridgeJSCodeForSwift.release.xcconfig"; sourceTree = "<group>"; };
 		A5FCF45F8437D7144B0122AF /* Pods-BridgeJSCodeForSwift.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BridgeJSCodeForSwift.debug.xcconfig"; path = "Pods/Target Support Files/Pods-BridgeJSCodeForSwift/Pods-BridgeJSCodeForSwift.debug.xcconfig"; sourceTree = "<group>"; };
 		ED065F04A25572167D11ECE0 /* Pods_BridgeJSCodeForSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_BridgeJSCodeForSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -124,6 +130,9 @@
 				37C7CCAA224343130010E7F9 /* tern */,
 				37C7CCAC224343220010E7F9 /* TernJS.swift */,
 				37C7CCAE2243436A0010E7F9 /* TernViewController.swift */,
+				37C7CCB0224484ED0010E7F9 /* TernBridge.swift */,
+				37C7CCB22244856B0010E7F9 /* TimerJSBridge.swift */,
+				37C7CCB4224490C90010E7F9 /* ConsoleJSBridge.swift */,
 			);
 			path = Tern;
 			sourceTree = "<group>";
@@ -261,9 +270,12 @@
 				37C7CC9C223A4BFF0010E7F9 /* HighlightJS.swift in Sources */,
 				37C7CC9E223A4C070010E7F9 /* HighlightViewController.swift in Sources */,
 				37C7CC9A223A4AE40010E7F9 /* PrismJS.swift in Sources */,
+				37C7CCB32244856B0010E7F9 /* TimerJSBridge.swift in Sources */,
 				37C7CCAF2243436A0010E7F9 /* TernViewController.swift in Sources */,
+				37C7CCB5224490C90010E7F9 /* ConsoleJSBridge.swift in Sources */,
 				37C7C7F1223A43620010E7F9 /* ViewController.swift in Sources */,
 				37C7CC98223A4AB10010E7F9 /* PrismViewController.swift in Sources */,
+				37C7CCB1224484ED0010E7F9 /* TernBridge.swift in Sources */,
 				37C7CCAD224343220010E7F9 /* TernJS.swift in Sources */,
 				37C7C7EF223A43620010E7F9 /* AppDelegate.swift in Sources */,
 			);

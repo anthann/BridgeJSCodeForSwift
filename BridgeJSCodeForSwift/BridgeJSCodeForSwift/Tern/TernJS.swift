@@ -12,16 +12,27 @@ import JavaScriptCore
 class TernJS {
     typealias CodeCompleteBlock = @convention(block) (Any?, Any?) -> ()
     private let jsContext = JSContext()!
-    private var fileContents: [String: String] = [String: String]()
+    private weak var ternBridge: TernBridge?
 
     init() {
         // Shim
-        jsContext.exceptionHandler = { (ctx: JSContext!, value: JSValue!) in
-            print(value!.toString())
+        jsContext.exceptionHandler = { (context, exception) in
+            guard let excep = exception else {
+                return
+            }
+            print(excep)
+            /*
+             此处打印js异常错误，JSContext不会主动抛出js异常。
+             常见异常：
+             ReferenceError: Can't find variable:
+             TypeError: undefined is not an object
+             */
+            context?.exception = excep
         }
         let window = JSValue(newObjectIn: jsContext)
         jsContext.setObject(window, forKeyedSubscript: "window" as NSString)
         TimerJS.registerInto(jsContext: jsContext)
+        ConsoleJSBridge.registerInto(jsContext: jsContext)
         
         // Load source files
         let bundle = Bundle.main
@@ -35,31 +46,7 @@ class TernJS {
         }
         
         // Initialize Tern.Server
-        let getFile: @convention(block) (String) -> String = { [weak self] filename in
-            print("filename: \(filename)")
-            guard let strongSelf = self else {
-                return ""
-            }
-            if let content = strongSelf.fileContents[filename] {
-                return content
-            } else {
-                return ""
-            }
-        }
-        jsContext.setObject(getFile, forKeyedSubscript: "_native_getfile" as NSString)
-        
-        jsContext.evaluateScript("""
-        var ternServer = new tern.Server({
-            getFile: _native_getfile,
-            async: true,
-        });
-        """)
-        
-        jsContext.evaluateScript("""
-        ternServer.requestFileUpdate = function(filename, content) {
-            this.request({files: [{type: 'full', name: filename, text: content}]}, (function(err, response){}))
-        };
-        """)
+        self.ternBridge = TernBridge.registerInto(jsContext: jsContext)
     }
     
     
@@ -72,8 +59,9 @@ class TernJS {
         guard let ternServer = jsContext.objectForKeyedSubscript("ternServer") else {
             return
         }
-        self.fileContents[filename] = text
-        ternServer.invokeMethod("requestFileUpdate", withArguments: [filename, text])
+        self.ternBridge?.fileContents[filename] = text
+//        ternServer.invokeMethod("requestFileUpdate", withArguments: [filename, text])
+        jsContext.evaluateScript("ternServer.requestFileUpdate('\(filename)', `\(text)`);")
     }
     
     /// 获取代码提示
@@ -83,20 +71,22 @@ class TernJS {
     ///   - offset: 光标相对文件首的偏移
     ///   - codeCompleteBlock: 回调函数。
     public func requestForHint(filename: String, offset: Int, codeCompleteBlock: @escaping CodeCompleteBlock) {
-        let ternServer = jsContext.objectForKeyedSubscript("ternServer")
-        jsContext.evaluateScript("""
-            var __doc = {query: {type: "completions", file: \"\(filename)\", end: \(offset)}}
-            """
-            )
-        guard let doc = jsContext.objectForKeyedSubscript("__doc") else {
-            return
-        }
+//        let ternServer = jsContext.objectForKeyedSubscript("ternServer")
+//        jsContext.evaluateScript("""
+//            var __doc = {query: {type: "completions", file: \"\(filename)\", end: \(offset)}}
+//            """
+//            )
+//        guard let doc = jsContext.objectForKeyedSubscript("__doc") else {
+//            return
+//        }
         jsContext.setObject(codeCompleteBlock, forKeyedSubscript: "__response_call_back" as NSString)
-        guard let callbackObj = jsContext.objectForKeyedSubscript("__response_call_back") else {
-            return
-        }
-        ternServer?.invokeMethod("request", withArguments: [doc, callbackObj])
-        
+//        guard let callbackObj = jsContext.objectForKeyedSubscript("__response_call_back") else {
+//            return
+//        }
+//        ternServer?.invokeMethod("request", withArguments: [doc, callbackObj])
+        jsContext.evaluateScript("""
+            ternServer.request({query: {type: "completions", file: '\(filename)', end: \(offset)}}, __response_call_back)
+        """)
     }
     
     /// 向TernServer增加一个源文件
@@ -122,78 +112,4 @@ class TernJS {
         ternServer.invokeMethod("delFile", withArguments: [name])
     }
 
-}
-
-let timerJSSharedInstance = TimerJS()
-
-@objc protocol TimerJSExport : JSExport {
-    
-    func setTimeout(_ callback : JSValue,_ ms : Double) -> String
-    
-    func clearTimeout(_ identifier: String)
-    
-    func setInterval(_ callback : JSValue,_ ms : Double) -> String
-    
-}
-
-// Custom class must inherit from `NSObject`
-@objc class TimerJS: NSObject, TimerJSExport {
-    var timers = [String: Timer]()
-    
-    static func registerInto(jsContext: JSContext, forKeyedSubscript: String = "timerJS") {
-        jsContext.setObject(timerJSSharedInstance,
-                            forKeyedSubscript: forKeyedSubscript as (NSCopying & NSObjectProtocol))
-        jsContext.evaluateScript(
-            "function setTimeout(callback, ms) {" +
-                "    return timerJS.setTimeout(callback, ms)" +
-                "}" +
-                "function clearTimeout(indentifier) {" +
-                "    timerJS.clearTimeout(indentifier)" +
-                "}" +
-                "function setInterval(callback, ms) {" +
-                "    return timerJS.setInterval(callback, ms)" +
-            "}"
-        )
-    }
-    
-    func clearTimeout(_ identifier: String) {
-        let timer = timers.removeValue(forKey: identifier)
-        
-        timer?.invalidate()
-    }
-    
-    
-    func setInterval(_ callback: JSValue,_ ms: Double) -> String {
-        return createTimer(callback: callback, ms: ms, repeats: true)
-    }
-    
-    func setTimeout(_ callback: JSValue, _ ms: Double) -> String {
-        return createTimer(callback: callback, ms: ms , repeats: false)
-    }
-    
-    func createTimer(callback: JSValue, ms: Double, repeats : Bool) -> String {
-        let timeInterval  = ms/1000.0
-        
-        let uuid = NSUUID().uuidString
-        
-        // make sure that we are queueing it all in the same executable queue...
-        // JS calls are getting lost if the queue is not specified... that's what we believe... ;)
-        DispatchQueue.main.async(execute: {
-            let timer = Timer.scheduledTimer(timeInterval: timeInterval,
-                                             target: self,
-                                             selector: #selector(self.callJsCallback),
-                                             userInfo: callback,
-                                             repeats: repeats)
-            self.timers[uuid] = timer
-        })
-        
-        
-        return uuid
-    }
-    
-    @objc func callJsCallback(_ timer: Timer) {
-        let callback = (timer.userInfo as! JSValue)
-        
-        callback.call(withArguments: nil)
-    }
 }
