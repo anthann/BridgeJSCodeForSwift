@@ -9,10 +9,19 @@
 import Foundation
 import JavaScriptCore
 
+protocol TernJSProtocol: AnyObject {
+    func completions(sender: TernBridge, candidates: [String], range: NSRange)
+}
+
 class TernJS {
     typealias CodeCompleteBlock = @convention(block) (Any?, Any?) -> ()
     private let jsContext = JSContext()!
     private weak var ternBridge: TernBridge?
+    public weak var delegate: TernJSProtocol? {
+        didSet {
+            ternBridge?.delegate = delegate
+        }
+    }
 
     init() {
         // Shim
@@ -21,34 +30,16 @@ class TernJS {
                 return
             }
             print(excep)
-            /*
-             此处打印js异常错误，JSContext不会主动抛出js异常。
-             常见异常：
-             ReferenceError: Can't find variable:
-             TypeError: undefined is not an object
-             */
             context?.exception = excep
         }
         let window = JSValue(newObjectIn: jsContext)
         jsContext.setObject(window, forKeyedSubscript: "window" as NSString)
         TimerJS.registerInto(jsContext: jsContext)
         ConsoleJSBridge.registerInto(jsContext: jsContext)
-        
-        // Load source files
-        let bundle = Bundle.main
-        let sources = ["polyfill", "acorn", "acorn-loose", "walk", "signal", "tern", "def", "comment", "infer", "modules", "es_modules", "requirejs", "doc_comment", "complete_strings"]
-        for source in sources {
-            if let url = bundle.url(forResource: source, withExtension: "js", subdirectory: "tern") {
-                jsContext.evaluateScript(try! String(contentsOf: url), withSourceURL: url)
-            } else {
-                fatalError()
-            }
-        }
-        
+    
         // Initialize Tern.Server
         self.ternBridge = TernBridge.registerInto(jsContext: jsContext)
     }
-    
     
     /// 更新源文件
     ///
@@ -56,12 +47,7 @@ class TernJS {
     ///   - text: 完整源文件内容
     ///   - filename: 文件名
     public func onTextChange(_ text: String, filename: String) {
-        guard let ternServer = jsContext.objectForKeyedSubscript("ternServer") else {
-            return
-        }
-        self.ternBridge?.fileContents[filename] = text
-//        ternServer.invokeMethod("requestFileUpdate", withArguments: [filename, text])
-        jsContext.evaluateScript("ternServer.requestFileUpdate('\(filename)', `\(text)`);")
+        ternBridge?.onTextChange(context: jsContext, text, filename: filename)
     }
     
     /// 获取代码提示
@@ -70,23 +56,8 @@ class TernJS {
     ///   - filename: 源文件名
     ///   - offset: 光标相对文件首的偏移
     ///   - codeCompleteBlock: 回调函数。
-    public func requestForHint(filename: String, offset: Int, codeCompleteBlock: @escaping CodeCompleteBlock) {
-//        let ternServer = jsContext.objectForKeyedSubscript("ternServer")
-//        jsContext.evaluateScript("""
-//            var __doc = {query: {type: "completions", file: \"\(filename)\", end: \(offset)}}
-//            """
-//            )
-//        guard let doc = jsContext.objectForKeyedSubscript("__doc") else {
-//            return
-//        }
-        jsContext.setObject(codeCompleteBlock, forKeyedSubscript: "__response_call_back" as NSString)
-//        guard let callbackObj = jsContext.objectForKeyedSubscript("__response_call_back") else {
-//            return
-//        }
-//        ternServer?.invokeMethod("request", withArguments: [doc, callbackObj])
-        jsContext.evaluateScript("""
-            ternServer.request({query: {type: "completions", file: '\(filename)', end: \(offset)}}, __response_call_back)
-        """)
+    public func requestForHint(filename: String, offset: Int) {
+        ternBridge?.requestForHint(context: jsContext, filename: filename, offset: offset)
     }
     
     /// 向TernServer增加一个源文件
@@ -95,10 +66,7 @@ class TernJS {
     ///   - name: 文件名
     ///   - content: 文件初始内容
     public func addFile(name: String, content: String) {
-        guard let ternServer = jsContext.objectForKeyedSubscript("ternServer") else {
-            return
-        }
-        ternServer.invokeMethod("addFile", withArguments: [name, content])
+        ternBridge?.addFile(context: jsContext, name: name, content: content)
     }
     
     
@@ -106,10 +74,7 @@ class TernJS {
     ///
     /// - Parameter name: 文件名
     public func deleteFile(name: String) {
-        guard let ternServer = jsContext.objectForKeyedSubscript("ternServer") else {
-            return
-        }
-        ternServer.invokeMethod("delFile", withArguments: [name])
+        ternBridge?.deleteFile(context: jsContext, name: name)
     }
 
 }

@@ -13,6 +13,7 @@ class TernViewController: UIViewController {
     lazy var textView = UITextView()
     lazy var tableView = UITableView()
     var candidates: [String] = [String]()
+    var range: NSRange?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -43,11 +44,14 @@ class TernViewController: UIViewController {
             make.top.equalTo(textView.snp.bottom).offset(20)
             make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
         }
+        ternJS.delegate = self
+        ternJS.addFile(name: "bb.js", content: "let a = 123; module.exports = {a}")
     }
 }
 
 extension TernViewController: UITextViewDelegate {
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
+        self.range = nil
         candidates.removeAll()
         tableView.reloadData()
         guard let oldText = textView.text else {
@@ -55,27 +59,7 @@ extension TernViewController: UITextViewDelegate {
         }
         let newText = (oldText as NSString).replacingCharacters(in: range, with: text)
         ternJS.onTextChange(newText, filename: "abc.js")
-//        if text == "." {
-            ternJS.requestForHint(filename: "abc.js", offset: range.location + 1) { [weak self] (err, response) in
-                if let err = err {
-                    if err is NSNull {
-                    } else {
-                        print("err: \(err)")
-                    }
-                }
-                if let dict = response as? NSDictionary {
-                    if let array = dict["completions"] as? NSArray {
-                        for item in array {
-                            if let str = item as? String {
-                                self?.candidates.append(str)
-                            }
-                        }
-                        self?.tableView.reloadData()
-                    }
-                    print(dict)
-                }
-            }
-//        }
+        ternJS.requestForHint(filename: "abc.js", offset: range.location + 1)
         return true
     }
 }
@@ -97,5 +81,23 @@ extension TernViewController: UITableViewDataSource {
 }
 
 extension TernViewController: UITableViewDelegate {
-    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let item = candidates[indexPath.row]
+        if let originText = textView.text, let range = self.range {
+            textView.text = (originText as NSString).replacingCharacters(in: range, with: item)
+        }
+        tableView.deselectRow(at: indexPath, animated: true)
+        self.range = nil
+        self.candidates.removeAll()
+    }
+}
+
+extension TernViewController: TernJSProtocol {
+    func completions(sender: TernBridge, candidates: [String], range: NSRange) {
+        if !candidates.isEmpty {
+            self.candidates.append(contentsOf: candidates)
+            self.tableView.reloadData()
+            self.range = range
+        }
+    }
 }
