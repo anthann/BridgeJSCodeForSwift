@@ -22,7 +22,7 @@ import JavaScriptCore
     static func registerInto(jsContext: JSContext, forKeyedSubscript: String = "TernBridge") -> TernBridge {
         // Load source files
         let bundle = Bundle.main
-        let sources = ["polyfill", "acorn", "acorn-loose", "walk", "signal", "tern", "def", "comment", "infer", "modules", "es_modules", "requirejs", "doc_comment", "complete_strings"]
+        let sources = ["polyfill", "acorn", "acorn-loose", "walk", "signal", "tern", "def", "comment", "infer", "modules", "es_modules", "requirejs", "doc_comment", "complete_strings", "commonjs"]
         for source in sources {
             if let url = bundle.url(forResource: source, withExtension: "js", subdirectory: "tern") {
                 jsContext.evaluateScript(try! String(contentsOf: url), withSourceURL: url)
@@ -39,6 +39,7 @@ import JavaScriptCore
             "let ternServer = new tern.Server({"       +
             "    getFile: TernBridge.getFile,"         +
             "    async: true,"                         +
+            "    plugins: {commonjs: true},"                         +
             "});"                                      +
             "ternServer.requestFileUpdate = function(filename, content) {"                                            +
             "    this.request({files: [{type: 'full', name: filename, text: content}]}, __callback__)" +

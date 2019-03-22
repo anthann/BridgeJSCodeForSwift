@@ -45,7 +45,7 @@ class TernViewController: UIViewController {
             make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
         }
         ternJS.delegate = self
-        ternJS.addFile(name: "bb.js", content: "let a = 123; module.exports = {a}")
+        ternJS.addFile(name: "bb.js", content: "let object = {a:123, b:false}; module.exports = {object}")
     }
 }
 
@@ -87,8 +87,6 @@ extension TernViewController: UITableViewDelegate {
             textView.text = (originText as NSString).replacingCharacters(in: range, with: item)
         }
         tableView.deselectRow(at: indexPath, animated: true)
-        self.range = nil
-        self.candidates.removeAll()
     }
 }
 
