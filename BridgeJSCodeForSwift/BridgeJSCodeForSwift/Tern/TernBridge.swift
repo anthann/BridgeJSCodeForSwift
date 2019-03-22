@@ -71,6 +71,21 @@ import JavaScriptCore
             ternServer.delFile(`\(name)`);
             """)
     }
+    
+    public func acornParse(context: JSContext, code: String, loose: Bool) -> String? {
+        let script: String
+        if loose {
+            script = "JSON.stringify(acorn.loose.parse(`\(code)`))"
+        } else {
+            script = "JSON.stringify(acorn.parse(`\(code)`))"
+        }
+        let result = context.evaluateScript(script)
+        if let jsonStr = result?.toString() {
+            return jsonStr
+        } else {
+            return nil
+        }
+    }
 }
 
 extension TernBridge: TernExportProtocol {

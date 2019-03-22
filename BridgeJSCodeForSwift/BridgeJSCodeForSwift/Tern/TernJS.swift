@@ -69,7 +69,6 @@ class TernJS {
         ternBridge?.addFile(context: jsContext, name: name, content: content)
     }
     
-    
     /// 删除源文件
     ///
     /// - Parameter name: 文件名
@@ -77,4 +76,13 @@ class TernJS {
         ternBridge?.deleteFile(context: jsContext, name: name)
     }
 
+    /// 调用acorn.parse，生成AST树
+    ///
+    /// - Parameters:
+    ///   - code: 代码
+    ///   - loose: true for “acorn.loose.parse()”, else “arcor.parse()”
+    /// - Returns: AST树，JSON String格式
+    public func acornParse(code: String, loose: Bool) -> String?{
+        return ternBridge?.acornParse(context: jsContext, code: code, loose: loose)
+    }
 }

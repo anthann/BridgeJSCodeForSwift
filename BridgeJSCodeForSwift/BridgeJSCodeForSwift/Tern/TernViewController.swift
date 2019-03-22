@@ -59,7 +59,16 @@ extension TernViewController: UITextViewDelegate {
         }
         let newText = (oldText as NSString).replacingCharacters(in: range, with: text)
         ternJS.onTextChange(newText, filename: "abc.js")
-        ternJS.requestForHint(filename: "abc.js", offset: range.location + 1)
+        if !(range.length == 1 && text.isEmpty) {
+            ternJS.requestForHint(filename: "abc.js", offset: range.location + 1)
+        }
+        if text == ";" {
+            if let result = ternJS.acornParse(code: newText, loose: true) {
+                print(result)
+            } else {
+                print("Parser returns unrecognized content.")
+            }
+        }
         return true
     }
 }
