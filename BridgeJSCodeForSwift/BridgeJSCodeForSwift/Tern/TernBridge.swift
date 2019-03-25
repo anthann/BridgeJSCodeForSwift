@@ -39,7 +39,7 @@ import JavaScriptCore
             "let ternServer = new tern.Server({"       +
             "    getFile: TernBridge.getFile,"         +
             "    async: true,"                         +
-            "    plugins: {commonjs: true},"                         +
+            "    plugins: {commonjs: true},"           +
             "});"                                      +
             "ternServer.requestFileUpdate = function(filename, content) {"                                            +
             "    this.request({files: [{type: 'full', name: filename, text: content}]}, __callback__)" +
@@ -56,7 +56,7 @@ import JavaScriptCore
     
     public func requestForHint(context: JSContext, filename: String, offset: Int) {
         context.evaluateScript("""
-            ternServer.request({query: {type: "completions", file: '\(filename)', end: \(offset)}}, __callback__)
+            ternServer.request({query: {type: "completions", file: '\(filename)', end: \(offset), includeKeywords: true}}, __callback__)
             """)
     }
     
