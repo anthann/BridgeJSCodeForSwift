@@ -9,8 +9,15 @@
 import Foundation
 import JavaScriptCore
 
+struct TernCompletionObject {
+    let name: String
+    let origin: String?
+    let isKeyword: Bool?
+    let type: String?
+}
+
 protocol TernJSProtocol: AnyObject {
-    func completions(sender: TernBridge, candidates: [String], range: NSRange)
+    func completions(sender: TernBridge, candidates: [TernCompletionObject], range: NSRange)
 }
 
 class TernJS {

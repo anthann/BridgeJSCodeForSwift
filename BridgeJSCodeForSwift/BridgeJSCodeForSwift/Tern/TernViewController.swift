@@ -100,9 +100,9 @@ extension TernViewController: UITableViewDelegate {
 }
 
 extension TernViewController: TernJSProtocol {
-    func completions(sender: TernBridge, candidates: [String], range: NSRange) {
+    func completions(sender: TernBridge, candidates: [TernCompletionObject], range: NSRange) {
         if !candidates.isEmpty {
-            self.candidates.append(contentsOf: candidates)
+            self.candidates.append(contentsOf: candidates.map { return $0.name })
             self.tableView.reloadData()
             self.range = range
         }

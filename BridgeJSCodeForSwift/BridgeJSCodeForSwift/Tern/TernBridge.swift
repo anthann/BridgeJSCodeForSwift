@@ -56,7 +56,7 @@ import JavaScriptCore
     
     public func requestForHint(context: JSContext, filename: String, offset: Int) {
         context.evaluateScript("""
-            ternServer.request({query: {type: "completions", file: '\(filename)', end: \(offset), includeKeywords: true}}, __callback__)
+            ternServer.request({query: {type: "completions", file: '\(filename)', end: \(offset), includeKeywords: true, caseInsensitive: true, types: true, origins: true}}, __callback__)
             """)
     }
     
@@ -106,11 +106,19 @@ extension TernBridge: TernExportProtocol {
             }
         }
         if let dict = response as? NSDictionary, let array = dict["completions"] as? NSArray, let start = dict["start"] as? Int, let end = dict["end"] as? Int {
-            var candidates = [String]()
+            var candidates = [TernCompletionObject]()
             for item in array {
-                if let str = item as? String {
-                    candidates.append(str)
+                guard let dict = item as? NSDictionary else {
+                    continue
                 }
+                guard let name = dict["name"] as? String else {
+                    continue
+                }
+                let isKeyword = dict["isKeyword"] as? Bool
+                let type = dict["type"] as? String
+                let origin = dict["origin"] as? String
+                let object = TernCompletionObject(name: name, origin: origin, isKeyword: isKeyword, type: type)
+                candidates.append(object)
             }
             let range = NSMakeRange(start, end - start)
             delegate?.completions(sender: self, candidates: candidates, range: range)
